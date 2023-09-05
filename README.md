@@ -4,7 +4,7 @@ This project is a simple program that allows the user to perform some basic oper
 The program uses SQLite3 as the database engine and provides a command-line interface for the user to interact with the data.
 
 The program can perform the following operations:
-Add a new student to the database with their name, age, grade, and address.
+Add a new student to the database with their name, nickname, age, class, regestration date, lesson.
 Delete an existing student from the database by their ID number.
 Modify the information of an existing student by their ID number.
 View the information of an existing student by their ID number.
