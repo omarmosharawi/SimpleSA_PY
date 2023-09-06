@@ -13,10 +13,10 @@ To run this program, you need to have Python 3 installed on your computer.
 You also need to have SQLite3 installed or use an online SQLite browser.
 
 To run the program, follow these steps:
-Clone or download this repository to your local machine.
-Open a terminal or command prompt and navigate to the folder where you saved the repository.
-Run the command python index.py to start the program.
-Follow the instructions on the screen to perform the operations you want.
+- Clone or download this repository to your local machine.
+- Open a terminal or command prompt and navigate to the folder where you saved the repository.
+- Run the command python main.py to start the program.
+- Follow the instructions on the screen to perform the operations you want.
 
 The instructions on the screen to perform:
 - To add a student, input the letter (a)
