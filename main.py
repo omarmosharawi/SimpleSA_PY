@@ -18,6 +18,9 @@ def validate_string(input):
   else:
     return False
 
+import datetime
+min_date = datetime.date(2000, 1, 1)
+max_date = datetime.date(2023, 12, 31)
 
 
 conn = sqlite3.connect("school.db", timeout=10)
@@ -72,7 +75,7 @@ def AddStudent():
   while True:
 
     while True:
-      name = input("\nEnter the student name: ")
+      name = input("\nEnter the student name to add: ")
       if name == "":
         print("Can't be empty! Please enter the name.")
         continue
@@ -131,7 +134,15 @@ def AddStudent():
           print ("can't be empty!")
           continue
         else:
-          break
+          try:
+              date = datetime.datetime.strptime(dateOfRegistration, "%Y-%m-%d").date()
+              if not (min_date <= date <= max_date):
+                  raise ValueError
+          except ValueError:
+              print("Invalid date! Please enter a valid date between 2000-01-01 and 2023-12-31.")
+              continue
+          else:
+              break
 
     print("Available lessons: [Arabic - English - Frensh - MATH - Sciences - Social Studies]")
     while True:
@@ -262,9 +273,17 @@ def ModifyStudentInformation():
       if dateOfRegistration == "":
         break
       else:
-        conn.execute("UPDATE students SET date_of_registration = ? WHERE student_id = ?", (dateOfRegistration, studentID))
-        conn.commit()
-        break
+          try:
+              date = datetime.datetime.strptime(dateOfRegistration, "%Y-%m-%d").date()
+              if not (min_date <= date <= max_date):
+                  raise ValueError
+          except ValueError:
+              print("Invalid date! Please enter a valid date between 2000-01-01 and 2023-12-31.")
+              continue
+          else:
+              conn.execute("UPDATE students SET date_of_registration = ? WHERE student_id = ?", (dateOfRegistration, studentID))
+              conn.commit()
+              break
 
     while True:
       print("Available lessons: [Arabic (1) - English (2) - Frensh (3) - MATH (4) - Sciences (5) - Social Studies (6)]")
