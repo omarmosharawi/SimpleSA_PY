@@ -102,7 +102,6 @@ def AddStudent():
       age = input("Enter the age: ")
       if age == "":
         print("Can't be empty! Enter the age.")
-        # continue
       else:
         try:
           age = int(age)
@@ -114,7 +113,6 @@ def AddStudent():
           break
         except ValueError:
           print("Invalid age! Please enter an integer.")
-          # continue
 
     print("Available school classes: [KG1 - KG2 - G1 - G2 - G3 - G4 - G5 - PREP1 - PREP2 - PREP3]")
     while True:
