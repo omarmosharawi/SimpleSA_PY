@@ -99,10 +99,10 @@ def AddStudent():
           continue
 
     while True:
-      age = int(input("Enter the age: "))
+      age = input("Enter the age: ")
       if age == "":
         print("Can't be empty! Enter the age.")
-        continue
+        # continue
       else:
         try:
           age = int(age)
@@ -114,7 +114,7 @@ def AddStudent():
           break
         except ValueError:
           print("Invalid age! Please enter an integer.")
-          continue
+          # continue
 
     print("Available school classes: [KG1 - KG2 - G1 - G2 - G3 - G4 - G5 - PREP1 - PREP2 - PREP3]")
     while True:
@@ -233,24 +233,23 @@ def ModifyStudentInformation():
         break
 
     while True:
-      age = int(input("Enter the new age: "))
+      age = input("Enter the new age: ")
       if age == "":
         break
       else:
         try:
-          checkAge = int(age)
+          age = int(age)
           if age <= 17:
             pass
           else:
             print("He\She is too old to edit a student older than 17 to our school. This not allow!")
             continue
-          print("The student age is:", checkAge)
+          conn.execute("UPDATE students SET age = ? WHERE student_id = ?", (age, studentID))
+          conn.commit()
           break
         except ValueError:
           print("Invalid age! Please enter an integer.")
-        conn.execute("UPDATE students SET age = ? WHERE student_id = ?", (age, studentID))
-        conn.commit()
-        break
+          continue
 
     while True:
       print("Available school classes: [KG1 - KG2 - G1 - G2 - G3 - G4 - G5 - PREP1 - PREP2 - PREP3]")
