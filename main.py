@@ -32,7 +32,7 @@ else:
 
 
 cursor = conn.cursor()
-t1 = """CREATE TABLE IF NOT EXISTS students (student_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, nickname TEXT NOT NULL, age INTEGER NOT NULL, class TEXT NOT NULL, date_of_registration DATE NOT NULL, lesson_id INTEGER, FOREIGN KEY (lesson_id) REFERENCES lessons (lesson_id))"""
+t1 = """CREATE TABLE IF NOT EXISTS students (student_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, nickname TEXT NOT NULL, age INTEGER NOT NULL, date_of_registration DATE NOT NULL, class_id INTEGER, lesson_id INTEGER, FOREIGN KEY (class_id) REFERENCES classes (class_id), FOREIGN KEY (lesson_id) REFERENCES lessons (lesson_id))"""
 try:
   cursor.execute(t1)
   conn.commit()
@@ -45,7 +45,7 @@ try:
   conn.commit()
 except Exception as e:
   print('Error:', e, '\n')
-lessonsData = [('Arabic',), ('English',), ('Frensh',), ('MATH',), ('Sciences',), ('Social Studies',)]
+lessonsData = [('ARABIC',), ('ENGLISH',), ('FRENSH',), ('MATH',), ('SCIENCES',), ('SOCIAL STUDIES',)]
 for lessons in lessonsData:
   lesson_name = lessons[0]
   cursor.execute("SELECT * FROM lessons WHERE lesson_name = ?", (lesson_name,))
@@ -114,18 +114,6 @@ def AddStudent():
         except ValueError:
           print("Invalid age! Please enter an integer.")
 
-    print("Available school classes: [KG1 - KG2 - G1 - G2 - G3 - G4 - G5 - PREP1 - PREP2 - PREP3]")
-    while True:
-      level = input("Enter the class: ")
-      cursor.execute("SELECT * FROM classes WHERE class_name = ?", (level,))
-      classExists = cursor.fetchall()
-      if len(classExists) == 0:
-        print("This class don't exists! Please enter from available classes only.")
-        conn.commit()
-        continue
-      else:
-        break
-
     while True:
         dateOfRegistration = input("Enter the date of registration (YYYY-MM-DD): ")
         if dateOfRegistration == "":
@@ -135,16 +123,30 @@ def AddStudent():
           try:
               date = datetime.datetime.strptime(dateOfRegistration, "%Y-%m-%d").date()
               if not (min_date <= date <= max_date):
-                  raise ValueError
+                raise ValueError
           except ValueError:
               print("Invalid date! Please enter a valid date between 2000-01-01 and 2023-12-31.")
               continue
           else:
               break
 
+    print("Available school classes: [KG1 - KG2 - G1 - G2 - G3 - G4 - G5 - PREP1 - PREP2 - PREP3]")
+    while True:
+      level = input("Enter the class: ")
+      level = level.upper()
+      cursor.execute("SELECT * FROM classes WHERE class_name = ?", (level,))
+      classExists = cursor.fetchall()
+      if len(classExists) == 0:
+        print("This class don't exists! Please enter from available classes only.")
+        conn.commit()
+        continue
+      else:
+        break
+
     print("Available lessons: [Arabic - English - Frensh - MATH - Sciences - Social Studies]")
     while True:
       lesson = input("Enter the lesson the student is studying: ")
+      lesson = lesson.upper()
       cursor.execute("SELECT * FROM lessons WHERE lesson_name = ?", (lesson,))
       lessonExists = cursor.fetchall()
       if len(lessonExists) == 0:
@@ -154,17 +156,25 @@ def AddStudent():
       else:
         break
 
-    addStudent = "INSERT INTO students (name, nickname, age, class, date_of_registration) VALUES (?, ?, ?, ?, ?)"
-    studentValues = (name, nickname, age, level, dateOfRegistration)
+    addStudent = "INSERT INTO students (name, nickname, age, date_of_registration) VALUES (?, ?, ?, ?)"
+    studentValues = (name, nickname, age, dateOfRegistration)
     conn.execute(addStudent, studentValues)
+    conn.commit()
+
+    cursor.execute("SELECT class_id FROM classes WHERE class_name = ?", (level,))
+    class_id = cursor.fetchone()[0]
+
+    updateClass = "UPDATE students SET class_id = ? WHERE name = ?"
+    studentValues = (class_id, name)
+    conn.execute(updateClass, studentValues)
     conn.commit()
 
     cursor.execute("SELECT lesson_id FROM lessons WHERE lesson_name = ?", (lesson,))
     lesson_id = cursor.fetchone()[0]
 
-    updateStudent = "UPDATE students SET lesson_id = ? WHERE name = ?"
+    updateLesson = "UPDATE students SET lesson_id = ? WHERE name = ?"
     studentValues = (lesson_id, name)
-    conn.execute(updateStudent, studentValues)
+    conn.execute(updateLesson, studentValues)
     conn.commit()
 
     print("The student has been added.")
@@ -250,22 +260,6 @@ def ModifyStudentInformation():
           continue
 
     while True:
-      print("Available school classes: [KG1 - KG2 - G1 - G2 - G3 - G4 - G5 - PREP1 - PREP2 - PREP3]")
-      level = input("Enter the new class: ")
-      if level == "":
-            break
-      else:
-        cursor.execute("SELECT * FROM classes WHERE class_name = ?", (level,))
-        classExists = cursor.fetchall()
-        if len(classExists) == 0:
-            print("This class don't exists! Please enter from available classes only.")
-            conn.commit()
-            continue
-        conn.execute("UPDATE students SET class = ? WHERE student_id = ?", (level, studentID))
-        conn.commit()
-        break
-
-    while True:
       dateOfRegistration = input("Enter the new date of registration (YYYY-MM-DD): ")
       if dateOfRegistration == "":
         break
@@ -283,8 +277,26 @@ def ModifyStudentInformation():
               break
 
     while True:
+      print("Available classes: [KG1 (1) - KG2 (2) - G1 (3) - G2 (4) - G3 (5) - G4 (6) - G5 (7) - PREP1 (8) - PREP2 (9) - PREP3 (10)]")
+      level = input("Enter the new class id: ")
+      level = level.upper()
+      if level == "":
+            break
+      else:
+        cursor.execute("SELECT * FROM classes WHERE class_id = ?", (level,))
+        classExists = cursor.fetchall()
+        if len(classExists) == 0:
+            print("This class don't exists! Please enter from available classes only.")
+            conn.commit()
+            continue
+        conn.execute("UPDATE students SET class_id = ? WHERE student_id = ?", (level, studentID))
+        conn.commit()
+        break
+
+    while True:
       print("Available lessons: [Arabic (1) - English (2) - Frensh (3) - MATH (4) - Sciences (5) - Social Studies (6)]")
       lesson = input("Enter the new lesson id: ")
+      lesson = lesson.upper()
       if lesson == "":
             break
       else:
@@ -321,12 +333,15 @@ def ViewStudentInformation():
     print("Name =>", student[1])
     print("Nickname =>", student[2])
     print("Age =>", student[3])
-    print("Class =>", student[4])
-    print("Date of registration =>", student[5])
+    print("Date of registration =>", student[4])
+
+    cursor.execute("SELECT class_name FROM classes WHERE class_id = ?", (student[5],))
+    class_name = cursor.fetchone()[0]
+    print("Class =>", class_name)
 
     cursor.execute("SELECT lesson_name FROM lessons WHERE lesson_id = ?", (student[6],))
     lesson_name = cursor.fetchone()[0]
-    print("Lessons =>", lesson_name)
+    print("Lesson =>", lesson_name)
 
 
 
@@ -361,7 +376,7 @@ def main():
             print("The database has been disconnected.")
             exit()
         else:
-            print("Invalid operation!")
+            print("Invalid operation! Try again...")
 
 
 
