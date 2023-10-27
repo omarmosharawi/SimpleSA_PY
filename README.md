@@ -1,4 +1,4 @@
-# Simple-School-Administration
+# School-Administration
 
 This project is a simple program that allows the user to perform some basic operations on a school system database using Python.
 The program uses SQLite3 as the database engine and provides a command-line interface for the user to interact with the data.
