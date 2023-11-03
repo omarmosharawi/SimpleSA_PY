@@ -9,7 +9,7 @@ Delete an existing student from the database by their ID number.
 Modify the information of an existing student by their ID number.
 View the information of an existing student by their ID number.
 
-To run this program, you need to have Python 3 installed on your computer.
+To run this program, you need to have Python3 installed on your computer.
 You also need to have SQLite3 installed or use an online SQLite browser.
 
 To run the program, follow these steps:
