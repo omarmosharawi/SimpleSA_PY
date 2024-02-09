@@ -1,4 +1,4 @@
-# School-Administration
+# School-Administration-System
 
 This project is a simple program that allows the user to perform some basic operations on a school system database using Python.
 The program uses SQLite3 as the database engine and provides a command-line interface for the user to interact with the data.
@@ -30,7 +30,7 @@ The instructions on the screen to perform:
 - To exit the App, input the letter (q) or press (Ctrl+C)
 
 ## Contributing
-formValid is an open source project and welcomes contributions from anyone. If you want to contribute to formValid, you can:
+SimpleSA_PY is an open source project and welcomes contributions from anyone. If you want to contribute to formValid, you can:
 1- report issues or suggest features.
 2- fork this repository and submit pull requests.
 - Contact me via email at omarmosharawi@gmail.com
